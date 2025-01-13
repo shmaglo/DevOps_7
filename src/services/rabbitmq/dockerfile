@@ -1,0 +1,6 @@
+# src/services/rabbitmq/Dockerfile
+# Используем образ RabbitMQ с интерфейсом управления
+FROM rabbitmq:3-management-alpine
+
+# Порт, который будет использоваться RabbitMQ
+EXPOSE 5672 15672
