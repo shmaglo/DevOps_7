@@ -1,0 +1,33 @@
+# Этап сборки
+FROM maven:3.9.4-eclipse-temurin-8 AS build
+
+# Создаем рабочую директорию
+WORKDIR /app
+
+# Копируем файлы mvnw и pom.xml
+COPY mvnw pom.xml ./
+COPY .mvn/ .mvn/
+
+# Делаем mvnw исполняемым и устанавливаем зависимости
+RUN mvn -B dependency:go-offline
+
+# Копируем исходный код проекта
+COPY src ./src
+
+# Собираем проект (пропускаем тесты для ускорения сборки)
+RUN mvn -B package -DskipTests
+
+# Этап исполнения
+FROM openjdk:8-jdk-alpine
+
+# Создаем рабочую директорию для финального образа
+WORKDIR /app
+
+# Копируем собранный JAR-файл из предыдущего этапа
+COPY --from=build /app/target/*.jar app.jar
+
+# Указываем порт, который будет использовать приложение
+EXPOSE 8087
+
+# Запускаем приложение через java -jar
+CMD ["java", "-jar", "app.jar"]

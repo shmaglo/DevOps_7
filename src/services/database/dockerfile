@@ -1,0 +1,9 @@
+# src/services/database/Dockerfile
+# Используем официальный образ PostgreSQL
+FROM postgres:latest
+
+# Копируем скрипт инициализации базы данных
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Порт, который будет использоваться PostgreSQL
+EXPOSE 5432
